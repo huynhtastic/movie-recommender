@@ -1,4 +1,6 @@
+import os
 from pdb import set_trace as st
+
 from pyspark import SparkConf, SparkContext
 
 def get_movies_csv(sc):
@@ -12,7 +14,9 @@ def get_movies_csv(sc):
         PythonRDD: the movies_csv with each movie in the structure:
             (movieid, (name, set(genres))
     """
-    movies_csv = sc.textFile('./movies.csv')
+    mcsv_path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), 'datasets', 'movies.csv')
+    movies_csv = sc.textFile(mcsv_path)
     movies_header = movies_csv.first()
     movies_csv = movies_csv.filter(lambda line: line != movies_header)
     return movies_csv.map(lambda line: line.split(',')).map(
@@ -28,7 +32,9 @@ def get_average_ratings(sc):
         PythonRDD: the ratings_csv with each movie in the structure:
             (movieid, (rating, num_ratings_added))
     """
-    ratings_csv = sc.textFile('./ratings.csv')
+    rcsv_path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), 'datasets', 'ratings.csv')
+    ratings_csv = sc.textFile(rcsv_path)
     ratings_header = ratings_csv.first()
     ratings_csv = ratings_csv.filter(lambda line: line != ratings_header)
     restruct_ratings = ratings_csv.map(lambda line: line.split(',')).map(
