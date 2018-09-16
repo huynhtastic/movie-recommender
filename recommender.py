@@ -116,9 +116,8 @@ def recommender(user_id, movie_id, avg_rating):
     else:
         res = rec_something(movie_id, avg_rating, movies_csv, average_ratings)
 
-    # print(res.takeSample(False, 5))
-    print(res.leftOuterJoin(average_ratings).take(10))
-    return res.first()
+    recs = res.leftOuterJoin(average_ratings).takeSample(False, 5)
+    return [movie[1] for movie in recs]
 
 
 if __name__ == '__main__':
